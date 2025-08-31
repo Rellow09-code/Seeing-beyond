@@ -1,35 +1,58 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from 'react';
+import axios from 'axios';
 
-function App() {
-  const [count, setCount] = useState(0)
+function ImageUpload() {
+  const [file, setFile] = useState(null);
+  const [prediction, setPrediction] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!file) return;
+
+    setPrediction("");
+    setError("");
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const res = await axios.post("http://127.0.0.1:5000/predict", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      setPrediction(res.data.prediction);
+    } catch (err) {
+      setError(err.response?.data?.error || "Something went wrong");
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+    <div style={{ maxWidth: "500px", margin: "auto", padding: "2rem" }}>
+      <h1>Scene Prediction</h1>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => setFile(e.target.files[0])}
+        />
+        <button type="submit" disabled={!file} style={{ marginLeft: "1rem" }}>
+          Predict
         </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+      </form>
+
+      {prediction && (
+        <h2 style={{ marginTop: "1rem", color: "green" }}>
+          Prediction: {prediction}
+        </h2>
+      )}
+
+      {error && (
+        <h2 style={{ marginTop: "1rem", color: "red" }}>
+          Error: {error}
+        </h2>
+      )}
+    </div>
+  );
 }
 
-export default App
+export default ImageUpload;
