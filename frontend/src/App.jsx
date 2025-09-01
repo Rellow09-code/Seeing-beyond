@@ -1,58 +1,20 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import ImageUpload from "./pages/Imageupload.jsx";
+import ImagePredictor from "./pages/scene.jsx"; // import the default component with the correct name
 
-function ImageUpload() {
-  const [file, setFile] = useState(null);
-  const [prediction, setPrediction] = useState("");
-  const [error, setError] = useState("");
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!file) return;
-
-    setPrediction("");
-    setError("");
-
-    const formData = new FormData();
-    formData.append("image", file);
-
-    try {
-      const res = await axios.post("http://127.0.0.1:5000/predict", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      setPrediction(res.data.prediction);
-    } catch (err) {
-      setError(err.response?.data?.error || "Something went wrong");
-    }
-  };
-
+export default function App() {
   return (
-    <div style={{ maxWidth: "500px", margin: "auto", padding: "2rem" }}>
-      <h1>Scene Prediction</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => setFile(e.target.files[0])}
-        />
-        <button type="submit" disabled={!file} style={{ marginLeft: "1rem" }}>
-          Predict
-        </button>
-      </form>
+    <Router>
+      <nav style={{ marginBottom: "20px" }}>
+        <Link to="/upload" style={{ marginRight: "10px" }}>Upload</Link>
+        <Link to="/scene">Scene Predictor</Link>
+      </nav>
 
-      {prediction && (
-        <h2 style={{ marginTop: "1rem", color: "green" }}>
-          Prediction: {prediction}
-        </h2>
-      )}
-
-      {error && (
-        <h2 style={{ marginTop: "1rem", color: "red" }}>
-          Error: {error}
-        </h2>
-      )}
-    </div>
+      <Routes>
+        <Route path="/upload" element={<ImageUpload />} />
+        <Route path="/scene" element={<ImagePredictor />} />
+      </Routes>
+    </Router>
   );
 }
-
-export default ImageUpload;
