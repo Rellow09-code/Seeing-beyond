@@ -138,8 +138,7 @@ cp main.py python/
 
 4. Create the deployment package (ZIP file):
 ```powershell
-# Using PowerShell
-Compress-Archive -Path * -DestinationPath ..\app.zip -Force
+Compress-Archive -Path python/* -DestinationPath ..\app.zip -Force
 ```
 
 5. Upload the generated `app.zip` to AWS Lambda through the AWS Console or CLI.
