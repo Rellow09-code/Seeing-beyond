@@ -1,17 +1,21 @@
-import mongoose from "mongoose";
+import mongoose, { ConnectOptions, WriteConcern } from "mongoose";
 import { db } from "../config";
 import colorsUtils from "../helpers/colorsUtils";
 import seedRoles from "../seeds/seedRoles";
 
-// db con URI
+// DB connection URI
 const dbURI = `${db.url}/${db.name}`;
 
-// additional configuration option for db
-const options = {
+// Correctly typed writeConcern
+const writeConcern: WriteConcern = { w: "majority" };
+
+// Additional configuration options
+const options: ConnectOptions = {
   minPoolSize: db.minPoolSize,
   maxPoolSize: db.maxPoolSize,
   connectTimeoutMS: 60000,
   socketTimeoutMS: 45000,
+  writeConcern,
 };
 
 mongoose.set("strictQuery", true);
@@ -20,37 +24,35 @@ function setRunValidators(this: any): void {
   this.setOptions({ runValidators: true });
 }
 
-// create a connection to the database
-mongoose
-  .plugin((schema: any) => {
-    schema.pre("findOneAndUpdate", setRunValidators);
-    schema.pre("updateMany", setRunValidators);
-    schema.pre("updateOne", setRunValidators);
-    schema.pre("update", setRunValidators);
-  })
-  .connect(dbURI, options)
-  .then(() => {
-    colorsUtils.log("success", "🛢  mongoose connection done");
-  })
-  .catch((e) => {
-    console.error("mongoose connection error: " + e.message);
-  });
+// Plugin to ensure validators run on updates
+mongoose.plugin((schema: any) => {
+  schema.pre("findOneAndUpdate", setRunValidators);
+  schema.pre("updateMany", setRunValidators);
+  schema.pre("updateOne", setRunValidators);
+  schema.pre("update", setRunValidators);
+});
 
-// connection events
+// Connect to MongoDB
+mongoose
+  .connect(dbURI, options)
+  .then(() => colorsUtils.log("success", "🛢  Mongoose connection done"))
+  .catch((e) => console.error("Mongoose connection error: " + e.message));
+
+// Connection events
 mongoose.connection.on("connected", () => {
   colorsUtils.log(
     "success",
-    "🔗 mongoose connection opened : " + mongoose.connection.host
+    "🔗 Mongoose connection opened : " + mongoose.connection.host
   );
 });
 
-// seed the roles once db is opened
-mongoose.connection.once("open", async () => {
-  await seedRoles();
+mongoose.connection.on("disconnected", () => {
+  colorsUtils.log("warning", "Mongoose connection disconnected");
 });
 
-mongoose.connection.on("disconnected", () => {
-  colorsUtils.log("warning", "mongoose connection disconnected");
+// Seed roles once DB is opened
+mongoose.connection.once("open", async () => {
+  await seedRoles();
 });
 
 export const connection = mongoose.connection;

@@ -4,6 +4,9 @@ import { corsUrl, environment } from "./config";
 import authRoutes from "./routes/user.routes";
 import chatRoutes from "./routes/chat.routes";
 import messageRoutes from "./routes/message.routes";
+import storyRoutes from "./routes/story.routes";
+
+
 import "./database"; // initialize database
 import {
   ApiError,
@@ -19,6 +22,7 @@ import { initSocketIo, emitSocketEvent } from "./socket";
 import path from "path";
 import { RateLimitRequestHandler, rateLimit } from "express-rate-limit";
 import requestIp from "request-ip";
+
 
 const app = express();
 
@@ -78,8 +82,11 @@ app.use("/api/chat", chatRoutes);
 // message Routes
 app.use("/api/messages", messageRoutes);
 
+app.use("/api/stories", storyRoutes);
+
 // create a static route to serve static images
 app.use("/public", express.static(path.join(__dirname, "..", "public")));
+
 
 // creating a socket server
 const io = new SocketServer(httpServer, {

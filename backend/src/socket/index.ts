@@ -75,11 +75,10 @@ const initSocketIo = (io: any): void => {
       mountStopTypingEvent(socket);
 
       // disconnect event
-      socket.on(ChatEventEnum.DISCONNECTED_EVENT, () => {
-        if (socket.user?._id) {
-          socket.leave(socket.user._id.toString());
-        }
+      socket.on(ChatEventEnum.SOCKET_ERROR_EVENT, (msg) => {
+        console.warn("Socket error:", msg);
       });
+      
     } catch (error) {
       socket.emit(
         ChatEventEnum.SOCKET_ERROR_EVENT,

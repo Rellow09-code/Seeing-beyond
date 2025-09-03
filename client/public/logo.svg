@@ -1,1 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="120" height="120"><path fill="none" d="M0 0h24v24H0z"/><path d="M4.929 19.071A9.969 9.969 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10H2l2.929-2.929zM11 6v12h2V6h-2zM7 9v6h2V9H7zm8 0v6h2V9h-2z" fill="rgba(114,105,239,1)"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="120" height="120">
+  <!-- Eye -->
+  <ellipse cx="32" cy="32" rx="20" ry="12" fill="none" stroke="#7269EF" stroke-width="4"/>
+  <circle cx="32" cy="32" r="6" fill="#7269EF"/>
+  
+  <!-- Sound waves (deaf/mute theme) -->
+  <path d="M44 28c2 4 2 8 0 12" stroke="#7269EF" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M48 24c4 8 4 16 0 24" stroke="#7269EF" stroke-width="3" fill="none" stroke-linecap="round"/>
+  
+  <!-- Heart (mental health/care) -->
+  <path d="M20 40 
+           C20 36, 28 36, 32 42 
+           C36 36, 44 36, 44 40 
+           C44 46, 32 52, 32 52 
+           C32 52, 20 46, 20 40 Z" 
+        fill="#7269EF"/>
+</svg>
