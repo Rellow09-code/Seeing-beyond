@@ -163,6 +163,4 @@ app.post('/speak', async (req, res) => {
 app.get('/', async (req, res) => {
     res.status(200).json({response:`The server is running perfectly, ready to serve. whether your request is about images or speech`});
 });
-
-//export app as a serverless app for vercel.
 module.exports = app;
