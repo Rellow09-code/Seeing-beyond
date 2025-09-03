@@ -1,5 +1,6 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from dotenv import load_dotenv
+from mangum import Mangum
 import boto3
 import uuid
 import os
@@ -92,3 +93,6 @@ async def delete_image(file_name: str):
         raise HTTPException(status_code=500, detail=f"Failed to delete file: {str(e)}")
 
     return {"detail": f"File '{file_name}' deleted successfully"}
+
+# 🔹 Add Lambda handler
+handler = Mangum(app)
