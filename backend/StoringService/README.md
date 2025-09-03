@@ -58,14 +58,14 @@ The API may return the following error responses:
 ### Uploading an Image
 ```bash
 curl -X POST \
-  https://2foftaugkqq73jn3jenhxyaxui0gzxff.lambda-url.eu-north-1.on.aws/upload-image \
+  <YOUR_LAMBDA_URL>/upload-image \
   -F "file=@local-image.jpg"
 ```
 
 ### Deleting an Image
 ```bash
 curl -X DELETE \
-  https://2foftaugkqq73jn3jenhxyaxui0gzxff.lambda-url.eu-north-1.on.aws/delete/filename.jpg
+  <YOUR_LAMBDA_URL>/delete/filename.jpg
 ```
 
 ## Deployment Guide for AWS Lambda
