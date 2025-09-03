@@ -1,0 +1,26 @@
+{
+  "name": "image_visuals",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@azure/cognitiveservices-computervision": "^8.2.0",
+    "@azure/ms-rest-js": "^2.7.0",
+    "@google-cloud/vision": "^5.3.3",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "microsoft-cognitiveservices-speech-sdk": "^1.45.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
