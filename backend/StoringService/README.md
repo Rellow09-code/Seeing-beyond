@@ -3,7 +3,7 @@
 This service handles image storage operations using AWS Lambda and S3. It provides endpoints for uploading and deleting images through a RESTful API.
 
 ## Service URL
-[https://2foftaugkqq73jn3jenhxyaxui0gzxff.lambda-url.eu-north-1.on.aws/](https://2foftaugkqq73jn3jenhxyaxui0gzxff.lambda-url.eu-north-1.on.aws/)
+[`<YOUR_LAMBDA_URL>`](https://your-function-url.lambda-url.region.on.aws/)
 
 ## Features
 - Image upload to AWS S3
