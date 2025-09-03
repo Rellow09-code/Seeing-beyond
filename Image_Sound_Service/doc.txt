@@ -1,0 +1,5 @@
+npm install nodemon
+npm i dotenv
+npm install @azure/cognitiveservices-computervision @azure/ms-rest-js
+npm install microsoft-cognitiveservices-speech-sdk
+npm install swagger-ui-express swagger-jsdoc
