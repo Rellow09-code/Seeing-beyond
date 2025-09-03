@@ -89,13 +89,14 @@ app.use("/public", express.static(path.join(__dirname, "..", "public")));
 
 // Serve Vite frontend build
 if (process.env.NODE_ENV === "production") {
-  const frontendPath = path.join(__dirname, "../../client/dist");
+  const frontendPath = path.join(__dirname, "client"); // ✅ inside dist
   app.use(express.static(frontendPath));
 
   app.get("*", (_req, res) => {
     res.sendFile(path.join(frontendPath, "index.html"));
   });
 }
+
 
 
 

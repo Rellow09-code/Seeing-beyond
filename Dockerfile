@@ -2,16 +2,16 @@ FROM node:18
 
 WORKDIR /app
 
-# Copy everything
+# Copy everything into /app
 COPY . .
 
-# Install backend deps and build backend
+# Build backend
 RUN cd backend && npm install && npm run build
 
-# Install client deps and build client
+# Build client
 RUN cd client && npm install && npm run build
 
-# Copy client build into backend/dist so your express.static can find it
+# Copy client build into backend/dist/client so Express can serve it
 RUN cp -r client/dist backend/dist/client
 
 EXPOSE 5000
