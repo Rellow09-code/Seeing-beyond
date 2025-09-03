@@ -6,8 +6,10 @@
   "scripts": {
     "dev": "nodemon -r tsconfig-paths/register src/server.ts",
     "build": "rimraf ./dist && tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "postinstall": "cd ../client && npm install && npm run build"
   }
+  
   ,
   "keywords": [
     "chat_app_backend",
