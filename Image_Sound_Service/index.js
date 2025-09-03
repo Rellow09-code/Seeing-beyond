@@ -164,6 +164,4 @@ app.get('/', async (req, res) => {
     res.status(200).json({response:`The server is running perfectly, ready to serve. whether your request is about images or speech`});
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}\nDocumentation: http://localhost:${PORT}/api-docs`);
-});
+module.exports = app;
