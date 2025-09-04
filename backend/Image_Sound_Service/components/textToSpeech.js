@@ -1,3 +1,4 @@
+
 const sdk = require('microsoft-cognitiveservices-speech-sdk');
 const fs = require('fs');
 const path = require('path');
@@ -7,7 +8,7 @@ speechConfig.speechSynthesisVoiceName = 'en-US-AriaNeural';
 
 async function synthesizeSpeech(text) {
     return new Promise((resolve, reject) => {
-        const filePath = path.join(__dirname, 'output.wav');
+        const filePath = path.join('/tmp', 'output.wav');
         const audioConfig = sdk.AudioConfig.fromAudioFileOutput(filePath);
         const synthesizer = new sdk.SpeechSynthesizer(speechConfig, audioConfig);
 
