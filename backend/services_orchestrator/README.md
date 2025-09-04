@@ -82,6 +82,69 @@ Process an image through multiple services.
 }
 ```
 
+### Response Formats
+
+The API supports two response formats which can be specified using the `format` query parameter:
+
+1. **JSON Format** (`?format=json`)
+   - Returns a JSON object containing the text description and landmark information
+   - Example request: `https://orchestra-production.up.railway.app/see-image?format=json`
+   - Response type: `application/json`
+   - Example response:
+   ```json
+   {
+       "text_description": "I See a group of people walking in a city street. This appears to be Eiffel Tower in Paris",
+       "landmark_info": {
+           "landmark": "Eiffel Tower",
+           "city": "Paris",
+           "location": {
+               "latitude": 48.8584,
+               "longitude": 2.2945
+           },
+           "score": 0.92
+       }
+   }
+   ```
+
+2. **Audio Format** (`?format=audio`)
+   - Returns the description as a WAV audio file
+   - Example request: `https://orchestra-production.up.railway.app/see-image?format=audio`
+   - Response type: `audio/wav`
+   - Content-Disposition: attachment; filename=description.wav
+   - The audio file contains the spoken version of the text description
+
+Example usage with different formats:
+
+```bash
+# Get JSON response
+curl -X POST \
+  -F "file=@your_image.jpg" \
+  "https://orchestra-production.up.railway.app/see-image?format=json"
+
+# Get Audio response
+curl -X POST \
+  -F "file=@your_image.jpg" \
+  "https://orchestra-production.up.railway.app/see-image?format=audio" \
+  --output description.wav
+```
+
+```javascript
+// JavaScript example for audio format
+const formData = new FormData();
+formData.append('file', imageFile);
+
+fetch('https://orchestra-production.up.railway.app/see-image?format=audio', {
+  method: 'POST',
+  body: formData
+})
+.then(response => response.blob())
+.then(blob => {
+  const url = window.URL.createObjectURL(blob);
+  const audio = new Audio(url);
+  audio.play();
+});
+```
+
 ## Deployed API
 
 The API is currently deployed and accessible at:
