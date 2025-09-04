@@ -4,17 +4,12 @@ import { Menu, X, Eye, Volume2, Ear, Heart, Hand, MessageCircle, User, UserPlus 
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const mobileMenuRef = useRef(null);
 
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 10);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const isActive = (path) => location.pathname === path;
 
-  // Dynamically animate max-height for mobile menu
+  // Animate max-height for mobile menu
   useEffect(() => {
     if (mobileMenuRef.current) {
       mobileMenuRef.current.style.maxHeight = open
@@ -23,14 +18,20 @@ export default function Navbar() {
     }
   }, [open]);
 
-  const isActive = (path) => location.pathname === path;
+  const links = [
+    { to: "/", label: "Home", icon: <User /> },
+    { to: "/deaf", label: "Deaf Mode", icon: <Ear /> },
+    { to: "/blind", label: "Blind Mode", icon: <Volume2 /> },
+    { to: "/breathing-exercises", label: "Breathing", icon: <Heart /> },
+    { to: "/sign-language", label: "Sign Language", icon: <Hand /> },
+    { to: "/daily-encouragement", label: "Encouragement", icon: <MessageCircle /> },
+    { to: "/chat", label: "Chat", icon: <MessageCircle /> },
+    { to: "/login", label: "Login", icon: <User /> },
+    { to: "/register", label: "Register", icon: <UserPlus /> },
+  ];
 
   return (
-    <nav
-      className={`w-full fixed top-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-purple-800/90 shadow-lg" : "bg-purple-700/80"
-      }`}
-    >
+    <nav className="w-full fixed top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-3">
           {/* Logo */}
@@ -39,7 +40,7 @@ export default function Navbar() {
             className="flex items-center space-x-2 text-white group"
             onClick={() => setOpen(false)}
           >
-            <div className="p-2 rounded-lg group-hover:bg-white/20 transition-all">
+            <div className="p-2 rounded-lg group-hover:bg-white/20 transition-all bg-purple-700/80">
               <Eye className="h-6 w-6 text-white" />
             </div>
             <h1 className="text-xl font-bold text-white">Seeing Beyond</h1>
@@ -47,7 +48,17 @@ export default function Navbar() {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-1">
-            {desktopLinks(isActive, setOpen)}
+            {links.map(({ to, label, icon }, idx) => (
+              <NavLink
+                key={idx}
+                to={to}
+                icon={icon}
+                active={isActive(to)}
+                onClick={() => setOpen(false)}
+              >
+                {label}
+              </NavLink>
+            ))}
           </div>
 
           {/* Mobile Menu Button */}
@@ -67,55 +78,23 @@ export default function Navbar() {
         >
           <div className="rounded-lg p-4 mt-2 bg-purple-700/80">
             <div className="grid grid-cols-1 gap-2">
-              {mobileLinks(isActive, setOpen)}
+              {links.map(({ to, label, icon }, idx) => (
+                <MobileNavLink
+                  key={idx}
+                  to={to}
+                  icon={icon}
+                  active={isActive(to)}
+                  onClick={() => setOpen(false)}
+                >
+                  {label}
+                </MobileNavLink>
+              ))}
             </div>
           </div>
         </div>
       </div>
     </nav>
   );
-}
-
-// Desktop Links
-function desktopLinks(isActive, setOpen) {
-  const links = [
-    { to: "/", label: "Home", icon: <User size={16} /> },
-    { to: "/deaf", label: "Deaf Mode", icon: <Ear size={16} /> },
-    { to: "/blind", label: "Blind Mode", icon: <Volume2 size={16} /> },
-    { to: "/breathing-exercises", label: "Breathing", icon: <Heart size={16} /> },
-    { to: "/sign-language", label: "Sign Language", icon: <Hand size={16} /> },
-    { to: "/daily-encouragement", label: "Encouragement", icon: <MessageCircle size={16} /> },
-    { to: "/chat", label: "Chat", icon: <MessageCircle size={16} /> },
-    { to: "/login", label: "Login", icon: <User size={16} /> },
-    { to: "/register", label: "Register", icon: <UserPlus size={16} /> },
-  ];
-
-  return links.map(({ to, label, icon }, idx) => (
-    <NavLink key={idx} to={to} icon={icon} active={isActive(to)} onClick={() => setOpen(false)}>
-      {label}
-    </NavLink>
-  ));
-}
-
-// Mobile Links
-function mobileLinks(isActive, setOpen) {
-  const links = [
-    { to: "/", label: "Home", icon: <User size={18} /> },
-    { to: "/deaf", label: "Deaf Mode", icon: <Ear size={18} /> },
-    { to: "/blind", label: "Blind Mode", icon: <Volume2 size={18} /> },
-    { to: "/breathing-exercises", label: "Breathing", icon: <Heart size={18} /> },
-    { to: "/sign-language", label: "Sign Language", icon: <Hand size={18} /> },
-    { to: "/daily-encouragement", label: "Encouragement", icon: <MessageCircle size={18} /> },
-    { to: "/chat", label: "Chat", icon: <MessageCircle size={18} /> },
-    { to: "/login", label: "Login", icon: <User size={18} /> },
-    { to: "/register", label: "Register", icon: <UserPlus size={18} /> },
-  ];
-
-  return links.map(({ to, label, icon }, idx) => (
-    <MobileNavLink key={idx} to={to} icon={icon} active={isActive(to)} onClick={() => setOpen(false)}>
-      {label}
-    </MobileNavLink>
-  ));
 }
 
 // Desktop NavLink
