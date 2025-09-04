@@ -60,11 +60,18 @@ app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(
   cors({
-    origin: corsUrl,
-    optionsSuccessStatus: 200,
+    origin: (origin, callback) => {
+      if (!origin || corsUrl.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("CORS not allowed"));
+      }
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   })
 );
+
 app.use(morgan("dev"));
 app.use(cookieParser());
 
@@ -105,10 +112,18 @@ if (process.env.NODE_ENV === "production") {
 const io = new SocketServer(httpServer, {
   pingTimeout: 60000,
   cors: {
-    origin: corsUrl,
+    origin: (origin, callback) => {
+      if (!origin || corsUrl.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("CORS not allowed"));
+      }
+    },
+    methods: ["GET", "POST"],
     credentials: true,
   },
 });
+
 
 // initialize the socker server
 initSocketIo(io);
