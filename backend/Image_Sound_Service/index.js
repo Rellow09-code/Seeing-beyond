@@ -163,4 +163,6 @@ app.post('/speak', async (req, res) => {
 app.get('/', async (req, res) => {
     res.status(200).json({response:`The server is running perfectly, ready to serve. whether your request is about images or speech`});
 });
-module.exports = app;
+app.listen(PORT,()=>{
+    console.log(`app is running on http://localhost:${PORT}`)
+})
