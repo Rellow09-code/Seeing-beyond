@@ -112,14 +112,7 @@ if (process.env.NODE_ENV === "production") {
 const io = new SocketServer(httpServer, {
   pingTimeout: 60000,
   cors: {
-    origin: (origin, callback) => {
-      if (!origin || corsUrl.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("CORS not allowed"));
-      }
-    },
-    methods: ["GET", "POST"],
+    origin: corsUrl,
     credentials: true,
   },
 });
