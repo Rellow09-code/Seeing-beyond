@@ -1,95 +1,76 @@
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
-import { corsUrl, environment } from "./config";
+import { environment } from "./config";
 import authRoutes from "./routes/user.routes";
 import chatRoutes from "./routes/chat.routes";
 import messageRoutes from "./routes/message.routes";
 import storyRoutes from "./routes/story.routes";
-
-
 import "./database"; // initialize database
-import {
-  ApiError,
-  ErrorType,
-  InternalError,
-  RateLimitError,
-} from "./core/ApiError";
+import { ApiError, ErrorType, InternalError, RateLimitError } from "./core/ApiError";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
-import { createServer, Server as HttpServer } from "http";
+import { createServer } from "http";
 import { Server as SocketServer } from "socket.io";
-import { initSocketIo, emitSocketEvent } from "./socket";
+import { initSocketIo } from "./socket";
 import path from "path";
 import { RateLimitRequestHandler, rateLimit } from "express-rate-limit";
 import requestIp from "request-ip";
 
-
 const app = express();
-
-// creation of http server
 const httpServer = createServer(app);
 
-// middleware to get the ip of client from the request
-app.use(requestIp.mw());
-
-// Adding a rate limiter to the server
+// ===================== RATE LIMIT =====================
 const limiter: RateLimitRequestHandler = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: 200, // Limit each IP to 200 requests per windowMs
-  standardHeaders: true, // Return rate limit info in the 'RateLimit-*' headers
-  legacyHeaders: false, // Disable the 'X-RateLimit-*' headers which were used before
-  keyGenerator: (req: Request, _: Response): string => {
-    return requestIp.getClientIp(req) || ""; // Return the IP address of the client
-  },
-  handler: (req: Request, res: Response, next: NextFunction, options) => {
+  max: 200,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req: Request) => requestIp.getClientIp(req) || "",
+  handler: (_req, _res, next, options) => {
     next(
       new RateLimitError(
-        `You exceeded the request limit. Allowed ${options.max} requests per ${
-          options.windowMs / 60000
-        } minute.`
+        `You exceeded the request limit. Allowed ${options.max} requests per ${options.windowMs / 60000} minute.`
       )
     );
   },
 });
-
-// Apply  the rate limiter to all routes
+app.use(requestIp.mw());
 app.use(limiter);
 
-// express app middlewares
+// ===================== MIDDLEWARES =====================
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
+app.use(cookieParser());
+app.use(morgan("dev"));
+
+// ===================== CORS =====================
+const allowedOrigins = [
+  "https://seeing-beyond-ai.vercel.app", // Vercel frontend
+  "http://localhost:5173",                // local dev
+];
+
 app.use(
   cors({
-    origin: corsUrl,
-    optionsSuccessStatus: 200,
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) callback(null, true);
+      else callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
+    optionsSuccessStatus: 200,
   })
 );
-app.use(morgan("dev"));
-app.use(cookieParser());
 
-// HEALTH CHECK ROUTE
-app.get("/health", (req, res) => {
-  res.send("healthy running");
-});
-
-// auth Routes
+// ===================== ROUTES =====================
+app.get("/health", (_req, res) => res.send("healthy running"));
 app.use("/auth", authRoutes);
-
-// chat Routes
 app.use("/api/chat", chatRoutes);
-
-// message Routes
 app.use("/api/messages", messageRoutes);
-
 app.use("/api/stories", storyRoutes);
-
-// create a static route to serve static images
 app.use("/public", express.static(path.join(__dirname, "..", "public")));
 
-// Serve Vite frontend build
+// ===================== STATIC FRONTEND SERVE =====================
 if (process.env.NODE_ENV === "production") {
-  const frontendPath = path.join(__dirname, "client"); // points to backend/dist/client
+  const frontendPath = path.join(__dirname, "../../client/dist"); // adjust if needed
   app.use(express.static(frontendPath));
 
   app.get("*", (_req, res) => {
@@ -97,43 +78,26 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-
-
-
-
-// creating a socket server
+// ===================== SOCKET.IO =====================
 const io = new SocketServer(httpServer, {
   pingTimeout: 60000,
   cors: {
-    origin: corsUrl,
+    origin: allowedOrigins,
     credentials: true,
   },
 });
-
-// initialize the socker server
 initSocketIo(io);
+app.set("io", io);
 
-app.set("io", io); // using set method to mount 'io' instance on app
-
-// middleware error handlers
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+// ===================== ERROR HANDLING =====================
+app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
   if (err instanceof ApiError) {
     ApiError.handle(err, res);
     if (err.type === ErrorType.INTERNAL)
-      console.error(
-        `500 - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}` +
-          "\n" +
-          `Error Stack: ${err.stack}`
-      );
+      console.error(`500 - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}\n${err.stack}`);
   } else {
-    console.error(
-      `500 - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}` +
-        "\n" +
-        `Error Stack: ${err.stack}`
-    );
-    if (environment === "development") {
-      return res.status(500).send(err.stack);
-    }
+    console.error(`500 - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}\n${err.stack}`);
+    if (environment === "development") return res.status(500).send(err.stack);
     ApiError.handle(new InternalError(), res);
   }
 });
