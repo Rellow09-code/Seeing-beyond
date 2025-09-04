@@ -14,7 +14,7 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Animate max-height dynamically based on content
+  // Dynamically animate max-height for mobile menu
   useEffect(() => {
     if (mobileMenuRef.current) {
       mobileMenuRef.current.style.maxHeight = open
@@ -45,21 +45,12 @@ export default function Navbar() {
             <h1 className="text-xl font-bold text-white">Seeing Beyond</h1>
           </Link>
 
-          {/* Desktop menu */}
+          {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-1">
-            <NavLink to="/" icon={<User size={16} />} active={isActive("/")} onClick={() => setOpen(false)}>Home</NavLink>
-            <NavLink to="/deaf" icon={<Ear size={16} />} active={isActive("/deaf")} onClick={() => setOpen(false)}>Deaf Mode</NavLink>
-            <NavLink to="/blind" icon={<Volume2 size={16} />} active={isActive("/blind")} onClick={() => setOpen(false)}>Blind Mode</NavLink>
-            <NavLink to="/breathing-exercises" icon={<Heart size={16} />} active={isActive("/breathing-exercises")} onClick={() => setOpen(false)}>Breathing</NavLink>
-            <NavLink to="/sign-language" icon={<Hand size={16} />} active={isActive("/sign-language")} onClick={() => setOpen(false)}>Sign Language</NavLink>
-            <NavLink to="/daily-encouragement" icon={<MessageCircle size={16} />} active={isActive("/daily-encouragement")} onClick={() => setOpen(false)}>Encouragement</NavLink>
-            <NavLink to="/chat" icon={<MessageCircle size={16} />} active={isActive("/chat")} onClick={() => setOpen(false)}>Chat</NavLink>
-            <div className="mx-2 h-6 w-px bg-white/30"></div>
-            <NavLink to="/login" icon={<User size={16} />} active={isActive("/login")} onClick={() => setOpen(false)}>Login</NavLink>
-            <NavLink to="/register" icon={<UserPlus size={16} />} active={isActive("/register")} onClick={() => setOpen(false)}>Register</NavLink>
+            {desktopLinks(isActive, setOpen)}
           </div>
 
-          {/* Mobile menu button */}
+          {/* Mobile Menu Button */}
           <button
             onClick={() => setOpen(!open)}
             className="md:hidden p-2 rounded-lg text-white hover:text-gray-200 transition-all"
@@ -69,23 +60,14 @@ export default function Navbar() {
           </button>
         </div>
 
-        {/* Mobile menu */}
+        {/* Mobile Menu */}
         <div
           ref={mobileMenuRef}
           className="md:hidden overflow-hidden transition-[max-height] duration-300 ease-in-out"
         >
           <div className="rounded-lg p-4 mt-2 bg-purple-700/80">
             <div className="grid grid-cols-1 gap-2">
-              <MobileNavLink to="/" icon={<User size={18} />} active={isActive("/")} onClick={() => setOpen(false)}>Home</MobileNavLink>
-              <MobileNavLink to="/deaf" icon={<Ear size={18} />} active={isActive("/deaf")} onClick={() => setOpen(false)}>Deaf Mode</MobileNavLink>
-              <MobileNavLink to="/blind" icon={<Volume2 size={18} />} active={isActive("/blind")} onClick={() => setOpen(false)}>Blind Mode</MobileNavLink>
-              <MobileNavLink to="/breathing-exercises" icon={<Heart size={18} />} active={isActive("/breathing-exercises")} onClick={() => setOpen(false)}>Breathing</MobileNavLink>
-              <MobileNavLink to="/sign-language" icon={<Hand size={18} />} active={isActive("/sign-language")} onClick={() => setOpen(false)}>Sign Language</MobileNavLink>
-              <MobileNavLink to="/daily-encouragement" icon={<MessageCircle size={18} />} active={isActive("/daily-encouragement")} onClick={() => setOpen(false)}>Encouragement</MobileNavLink>
-              <MobileNavLink to="/chat" icon={<MessageCircle size={18} />} active={isActive("/chat")} onClick={() => setOpen(false)}>Chat</MobileNavLink>
-              <div className="my-2 h-px bg-white/30"></div>
-              <MobileNavLink to="/login" icon={<User size={18} />} active={isActive("/login")} onClick={() => setOpen(false)}>Login</MobileNavLink>
-              <MobileNavLink to="/register" icon={<UserPlus size={18} />} active={isActive("/register")} onClick={() => setOpen(false)}>Register</MobileNavLink>
+              {mobileLinks(isActive, setOpen)}
             </div>
           </div>
         </div>
@@ -94,7 +76,49 @@ export default function Navbar() {
   );
 }
 
-// Desktop link
+// Desktop Links
+function desktopLinks(isActive, setOpen) {
+  const links = [
+    { to: "/", label: "Home", icon: <User size={16} /> },
+    { to: "/deaf", label: "Deaf Mode", icon: <Ear size={16} /> },
+    { to: "/blind", label: "Blind Mode", icon: <Volume2 size={16} /> },
+    { to: "/breathing-exercises", label: "Breathing", icon: <Heart size={16} /> },
+    { to: "/sign-language", label: "Sign Language", icon: <Hand size={16} /> },
+    { to: "/daily-encouragement", label: "Encouragement", icon: <MessageCircle size={16} /> },
+    { to: "/chat", label: "Chat", icon: <MessageCircle size={16} /> },
+    { to: "/login", label: "Login", icon: <User size={16} /> },
+    { to: "/register", label: "Register", icon: <UserPlus size={16} /> },
+  ];
+
+  return links.map(({ to, label, icon }, idx) => (
+    <NavLink key={idx} to={to} icon={icon} active={isActive(to)} onClick={() => setOpen(false)}>
+      {label}
+    </NavLink>
+  ));
+}
+
+// Mobile Links
+function mobileLinks(isActive, setOpen) {
+  const links = [
+    { to: "/", label: "Home", icon: <User size={18} /> },
+    { to: "/deaf", label: "Deaf Mode", icon: <Ear size={18} /> },
+    { to: "/blind", label: "Blind Mode", icon: <Volume2 size={18} /> },
+    { to: "/breathing-exercises", label: "Breathing", icon: <Heart size={18} /> },
+    { to: "/sign-language", label: "Sign Language", icon: <Hand size={18} /> },
+    { to: "/daily-encouragement", label: "Encouragement", icon: <MessageCircle size={18} /> },
+    { to: "/chat", label: "Chat", icon: <MessageCircle size={18} /> },
+    { to: "/login", label: "Login", icon: <User size={18} /> },
+    { to: "/register", label: "Register", icon: <UserPlus size={18} /> },
+  ];
+
+  return links.map(({ to, label, icon }, idx) => (
+    <MobileNavLink key={idx} to={to} icon={icon} active={isActive(to)} onClick={() => setOpen(false)}>
+      {label}
+    </MobileNavLink>
+  ));
+}
+
+// Desktop NavLink
 function NavLink({ to, icon, active, onClick, children }) {
   return (
     <Link
@@ -110,7 +134,7 @@ function NavLink({ to, icon, active, onClick, children }) {
   );
 }
 
-// Mobile link
+// Mobile NavLink
 function MobileNavLink({ to, icon, active, onClick, children }) {
   return (
     <Link
