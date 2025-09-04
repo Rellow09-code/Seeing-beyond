@@ -4,11 +4,10 @@
   "description": "backend for zenchat chat service ",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon -r tsconfig-paths/register src/server.ts",
-    "build": "rimraf ./dist && tsc",
-    "start": "node dist/server.js",
-    "postinstall": "cd ../client && npm install && npm run build"
+    "build": "tsc",          
+    "start": "node dist/server.js"
   }
+  
   
   ,
   "keywords": [

@@ -13,7 +13,7 @@ export const db = {
 };
 
 // spliting the corlUrl and return url string array
-export const corsUrl = process.env.CORS_URL?.split(",") || [];
+export const corsUrl = process.env.CORS_URL?.split(",") || ["https://seeing-beyond-ai.vercel.app"];
 console.log(corsUrl);
 
 export const cookieValidity = process.env.COOKIE_VALIDITY_SEC || "0";
